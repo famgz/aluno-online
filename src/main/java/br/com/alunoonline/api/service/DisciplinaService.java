@@ -1,20 +1,26 @@
 package br.com.alunoonline.api.service;
 
-import br.com.alunoonline.api.model.Disciplina;
-import br.com.alunoonline.api.repository.DisciplinaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import br.com.alunoonline.api.model.Disciplina;
+import br.com.alunoonline.api.repository.DisciplinaRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import springfox.documentation.annotations.Cacheable;
 
+@Log4j2
 @Service
+@AllArgsConstructor
 public class DisciplinaService {
-    @Autowired
     DisciplinaRepository disciplinaRepository;
 
+    @CacheEvict(value = "LISTA_DISCIPLINAS", allEntries = true)
     public void create(Disciplina disciplina) {
         disciplinaRepository.save(disciplina);
     }
@@ -31,7 +37,9 @@ public class DisciplinaService {
         return disciplinaFromDb;
     }
 
+    @Cacheable("LISTA_DISCIPLINAS")
     public List<Disciplina> findByProfessorId(Long professorId) {
+        log.info("Listando disciplinas");
         return disciplinaRepository.findByProfessorId(professorId);
     }
 

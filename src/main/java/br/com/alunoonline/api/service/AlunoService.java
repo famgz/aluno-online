@@ -2,6 +2,9 @@ package br.com.alunoonline.api.service;
 
 import br.com.alunoonline.api.model.Aluno;
 import br.com.alunoonline.api.repository.AlunoRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -10,7 +13,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
+@AllArgsConstructor
 public class AlunoService {
     @Autowired
     AlunoRepository alunoRepository;
@@ -21,6 +26,11 @@ public class AlunoService {
 
     public List<Aluno> findAll() {
         return alunoRepository.findAll();
+    }
+
+    public Aluno buscarAlunoPorEmaileCpf(String email,
+            String cpf) {
+        return alunoRepository.buscarAlunoPorEmaileCpf(email, cpf);
     }
 
     public Optional<Aluno> findById(Long id) {
@@ -44,8 +54,9 @@ public class AlunoService {
     }
 
     public void deleteById(Long id) {
-        Optional<Aluno> alunoFromDb = findById(id);
+        log.info("Iniciando exclusão de alunos");
         alunoRepository.deleteById(id);
+        log.info("Encerrando exclusão de alunos");
     }
 
 }

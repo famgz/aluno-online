@@ -1,5 +1,14 @@
 package br.com.alunoonline.api.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import br.com.alunoonline.api.dto.AtualizarNotasRequest;
 import br.com.alunoonline.api.dto.DisciplinasAlunoResponse;
 import br.com.alunoonline.api.dto.HistoricoAlunoResponse;
@@ -7,14 +16,6 @@ import br.com.alunoonline.api.enums.MatriculaAlunoStatusEnum;
 import br.com.alunoonline.api.model.Aluno;
 import br.com.alunoonline.api.model.MatriculaAluno;
 import br.com.alunoonline.api.repository.MatriculaAlunoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MatriculaAlunoService {
@@ -87,7 +88,8 @@ public class MatriculaAlunoService {
             double media = calcularMedia(novaNota1, novaNota2);
             matriculaAluno.setStatus(
                     (media >= MEDIA_PARA_SER_APROVADO)
-                            ? MatriculaAlunoStatusEnum.APROVADO : MatriculaAlunoStatusEnum.REPROVADO);
+                            ? MatriculaAlunoStatusEnum.APROVADO
+                            : MatriculaAlunoStatusEnum.REPROVADO);
         }
 
         matriculaAlunoRepository.save(matriculaAluno);
@@ -99,7 +101,8 @@ public class MatriculaAlunoService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matricula  não encontrada"));
 
         if (!MatriculaAlunoStatusEnum.MATRICULADO.equals(matriculaAluno.getStatus())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Só é possível trancar matrícula com status MATRICULADO");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Só é possível trancar matrícula com status MATRICULADO");
         }
 
         matriculaAluno.setStatus(MatriculaAlunoStatusEnum.TRANCADO);
