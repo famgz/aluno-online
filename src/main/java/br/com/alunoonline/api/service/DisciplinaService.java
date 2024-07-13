@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,7 +13,6 @@ import br.com.alunoonline.api.model.Disciplina;
 import br.com.alunoonline.api.repository.DisciplinaRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import springfox.documentation.annotations.Cacheable;
 
 @Log4j2
 @Service

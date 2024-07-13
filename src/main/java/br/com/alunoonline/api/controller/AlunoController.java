@@ -31,10 +31,11 @@ public class AlunoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@Valid @RequestBody Aluno aluno) {
+    public Aluno create(@Valid @RequestBody Aluno aluno) {
         log.info("Iniciando criação de aluno");
-        alunoService.create(aluno);
+        var alunoCriado = alunoService.create(aluno);
         log.info("Encerrando criação de aluno");
+        return alunoCriado;
     }
 
     @GetMapping("/all")

@@ -1,27 +1,30 @@
 package br.com.alunoonline.api.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import br.com.alunoonline.api.client.ViaCepClient;
 import br.com.alunoonline.api.model.Aluno;
 import br.com.alunoonline.api.repository.AlunoRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.Optional;
-
 @Slf4j
 @Service
 @AllArgsConstructor
 public class AlunoService {
-    @Autowired
-    AlunoRepository alunoRepository;
+    private AlunoRepository alunoRepository;
+    private ViaCepClient viaCepClient;
 
-    public void create(Aluno aluno) {
+    public Aluno create(Aluno aluno) {
+        log.info("Iniciando criacao de aluno");
+        obterEnderecoPorCEP(aluno);
         alunoRepository.save(aluno);
+        return aluno;
     }
 
     public List<Aluno> findAll() {
@@ -57,6 +60,17 @@ public class AlunoService {
         log.info("Iniciando exclusão de alunos");
         alunoRepository.deleteById(id);
         log.info("Encerrando exclusão de alunos");
+    }
+
+    private void obterEnderecoPorCEP(Aluno aluno) {
+        var cep = aluno.getEndereco().getCep();
+        var enderecoResponse = viaCepClient.consultaCep(cep);
+        var alunoEndereco = aluno.getEndereco();
+        alunoEndereco.setLogradouro(enderecoResponse.getLogradouro());
+        alunoEndereco.setComplemento(enderecoResponse.getComplemento());
+        alunoEndereco.setBairro(enderecoResponse.getBairro());
+        alunoEndereco.setLocalidade(enderecoResponse.getLocalidade());
+        alunoEndereco.setUf(enderecoResponse.getUf());
     }
 
 }
