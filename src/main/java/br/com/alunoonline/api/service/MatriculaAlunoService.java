@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import br.com.alunoonline.api.dto.AtualizarNotasRequest;
-import br.com.alunoonline.api.dto.DisciplinasAlunoResponse;
-import br.com.alunoonline.api.dto.HistoricoAlunoResponse;
+import br.com.alunoonline.api.dtos.AtualizarNotasRequest;
+import br.com.alunoonline.api.dtos.DisciplinasAlunoResponse;
+import br.com.alunoonline.api.dtos.HistoricoAlunoResponse;
 import br.com.alunoonline.api.enums.MatriculaAlunoStatusEnum;
 import br.com.alunoonline.api.model.Aluno;
 import br.com.alunoonline.api.model.MatriculaAluno;
@@ -63,7 +63,7 @@ public class MatriculaAlunoService {
     }
 
     public void deleteById(Long id) {
-        Optional<MatriculaAluno> matriculaAlunoFromDb = findById(id);
+        findById(id);
         matriculaAlunoRepository.deleteById(id);
     }
 

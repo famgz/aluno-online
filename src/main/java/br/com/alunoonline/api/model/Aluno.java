@@ -33,6 +33,7 @@ public class Aluno implements Serializable {
 
     @Email(message = "Informe um e-mail válido para o campo, deve conter @")
     private String email;
+
     @CPF
     private String cpf;
 

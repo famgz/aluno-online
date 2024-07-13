@@ -54,7 +54,7 @@ public class DisciplinaService {
     }
 
     public void deleteById(Long id) {
-        Optional<Disciplina> disciplinaFromDb = findById(id);
+        findById(id);
         disciplinaRepository.deleteById(id);
     }
 }
