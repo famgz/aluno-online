@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.hibernate.validator.constraints.br.CPF;
 
+import br.com.alunoonline.api.validators.EmailValidation;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ public class Professor implements Serializable {
             "deve ser entre 2 e 150 caracteres")
     private String name;
 
-    @Email(message = "O e-mail deve conter @ ")
+    @EmailValidation
     private String email;
 
     @CPF
