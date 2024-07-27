@@ -2,6 +2,7 @@ package br.com.alunoonline.api.model;
 
 import java.io.Serializable;
 
+import lombok.Builder;
 import org.hibernate.validator.constraints.br.CPF;
 
 import jakarta.persistence.CascadeType;
@@ -21,6 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Builder
 public class Aluno implements Serializable {
 
     @Id

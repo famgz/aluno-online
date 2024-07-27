@@ -1,9 +1,13 @@
 package br.com.alunoonline.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import br.com.alunoonline.api.client.AlunoFakerClient;
+import br.com.alunoonline.api.model.Endereco;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 public class AlunoService {
     private AlunoRepository alunoRepository;
     private ViaCepClient viaCepClient;
+    private AlunoFakerClient fakerClient;
+
+    private List<Aluno> alunos = new ArrayList<>();
 
     public Aluno create(Aluno aluno) {
         log.info("Iniciando criacao de aluno");
@@ -27,12 +34,40 @@ public class AlunoService {
         return aluno;
     }
 
+    public void createAll(List<Aluno> novosAlunos) {
+        alunoRepository.saveAll(novosAlunos);
+    }
+
+    @Scheduled(fixedRate = 10 * 1000)
+    public void adicionarAlunoPeriodicamente() {
+        Aluno aluno = new Aluno(1L, "Joao", "joao@email.com", "12345678900", 1980, null);
+        alunos.add(aluno);
+        log.info("Aluno adicionado {}", aluno);
+    }
+
+    @Scheduled(fixedRate = 15 * 1000)
+    public void atualizarAlunoPeriodicamente() {
+        if (!alunos.isEmpty()) {
+            Aluno aluno = alunos.get(0);
+            aluno.setName("Joao atualizado");
+            log.info("Aluno atualizado {}", aluno);
+        }
+    }
+
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void removerAlunoPeriodicamente() {
+        if (!alunos.isEmpty()) {
+            Aluno aluno = alunos.remove(0);
+            log.info("Aluno removido {}", aluno);
+        }
+    }
+
     public List<Aluno> findAll() {
         return alunoRepository.findAll();
     }
 
     public Aluno buscarAlunoPorEmaileCpf(String email,
-            String cpf) {
+                                         String cpf) {
         return alunoRepository.buscarAlunoPorEmaileCpf(email, cpf);
     }
 
@@ -62,15 +97,19 @@ public class AlunoService {
         log.info("Encerrando exclusão de alunos");
     }
 
-    private void obterEnderecoPorCEP(Aluno aluno) {
+    public void obterEnderecoPorCEP(Aluno aluno) {
         var cep = aluno.getEndereco().getCep();
-        var enderecoResponse = viaCepClient.consultaCep(cep);
-        var alunoEndereco = aluno.getEndereco();
-        alunoEndereco.setLogradouro(enderecoResponse.getLogradouro());
-        alunoEndereco.setComplemento(enderecoResponse.getComplemento());
-        alunoEndereco.setBairro(enderecoResponse.getBairro());
-        alunoEndereco.setLocalidade(enderecoResponse.getLocalidade());
-        alunoEndereco.setUf(enderecoResponse.getUf());
+        log.info("Consultando CEP {}", cep);
+        try {
+            var enderecoResponse = viaCepClient.consultaCep(cep);
+            var alunoEndereco = aluno.getEndereco();
+            alunoEndereco.setLogradouro(enderecoResponse.getLogradouro());
+            alunoEndereco.setComplemento(enderecoResponse.getComplemento());
+            alunoEndereco.setBairro(enderecoResponse.getBairro());
+            alunoEndereco.setLocalidade(enderecoResponse.getLocalidade());
+            alunoEndereco.setUf(enderecoResponse.getUf());
+        } catch (Exception e) {
+            log.warn("Erro ao obter dados do CEP {}", cep);
+        }
     }
-
 }

@@ -1,10 +1,8 @@
 package br.com.alunoonline.api.dtos;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class EnderecoViaCepResponse {
     private String cep;
     private String logradouro;
